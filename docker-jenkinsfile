@@ -8,8 +8,8 @@ pipeline {
             steps {
                 sh "mvn clean package"
                 sh "docker build . -t tomcatwebapp:${env.BUILD_ID}"
-                sh "docker run -it -p 8181:8080 tomcatwebapp:${env.BUILD_ID}"
-                sh "docker run -it -p 8282:8080 tomcatwebapp:${env.BUILD_ID}"
+                sh "docker run -i -p 8181:8080 tomcatwebapp:${env.BUILD_ID}"
+                sh "docker run -i -p 8282:8080 tomcatwebapp:${env.BUILD_ID}"
             }
         }    
         stage ("Shutdown server"){
