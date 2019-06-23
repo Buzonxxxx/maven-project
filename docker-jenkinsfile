@@ -12,16 +12,5 @@ pipeline {
                 sh "docker run -d -i -p 8282:8080 tomcatwebapp:${env.BUILD_ID}"
             }
         }    
-        stage ("Shutdown server"){
-            steps{
-                timeout(time:5, unit:"DAYS"){
-                    input message:"Shutdown stage(localhost:8181) and production(localhost:8282) servers?"
-                }
-                script {
-                    list = docker ps -q
-                }
-                sh "docker kill ${list}"
-            }
-        }            
     }  
 }
