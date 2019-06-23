@@ -8,7 +8,17 @@ pipeline {
             steps {
                 sh "mvn clean package"
                 sh "docker build . -t tomcatwebapp:${env.BUILD_ID}"
+                sh "docker run -it -p 8181:8080 tomcatwebapp:${env.BUILD_ID}"
+                sh "docker run -it -p 8282:8080 tomcatwebapp:${env.BUILD_ID}"
             }
-        }              
+        }    
+        stage ("Shutdown server"){
+            steps{
+                timeout(time:5, unit:"DAYS"){
+                    input message:"Shutdown stage(localhost:8181) and production(localhost:8282) servers?"
+                }
+                sh "docker kill $(docker ps -q)"
+            }
+        }            
     }  
 }
