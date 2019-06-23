@@ -10,9 +10,13 @@ pipeline {
                 sh "docker build . -t tomcatwebapp:${env.BUILD_ID}"
             }
         }
-        stage("Deploy"){
+        stage("Deploy to staging (port:8181)"){
             steps {
                 sh "docker run -d -i -p 8181:8080 tomcatwebapp:${env.BUILD_ID}"
+            }
+        }  
+        stage("Deploy to prod (port:8282)"){
+            steps {
                 sh "docker run -d -i -p 8282:8080 tomcatwebapp:${env.BUILD_ID}"
             }
         }        
