@@ -10,42 +10,32 @@ pipeline {
          string(name: 'tomcat_prod', defaultValue: '54.180.103.165', description: 'Production Server')
     }
 
-    triggers {
-         pollSCM('* * * * *')
-     }
-
 stages{
         stage('Build'){
             steps {
                 sh 'mvn clean package'
-                sh "ssh -o StrictHostKeyChecking=no -i /Users/louis/Documents/tomcat-demo.pem ec2-user@${params.tomcat_stage}"
-                sh "docker build . -t tomcatwebapp:${env.BUILD_ID}"
             }
-            // post {
-            //     success {
-            //         echo 'Now Archiving...'
-            //         archiveArtifacts artifacts: '**/target/*.war'
-            //     }
-            // }
+            post {
+                success {
+                    echo 'Now Archiving...'
+                    archiveArtifacts artifacts: '**/target/*.war'
+                }
+            }
         }
 
         stage ('Deployments'){
             parallel{
                 stage ('Deploy to Staging'){
                     steps {
-                        // sh "scp -o StrictHostKeyChecking=no -i /Users/louis/Documents/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_stage}:/var/lib/tomcat7/webapps"
-                        // sh "cd /Users/louis/Documents"
-                        // sh "ssh ec2-user@${params.tomcat_stage} -i tomcat-demo.pem"
-                        // sh "ssh -o StrictHostKeyChecking=no -i /Users/louis/Documents/tomcat-demo.pem ec2-user@${params.tomcat_stage}"
-                        sh "docker run -d -i -p 8181:8080 tomcatwebapp:${env.BUILD_ID}"
+                        sh "scp -o StrictHostKeyChecking=no -i /Users/louis/Documents/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_stage}:/var/lib/tomcat7/webapps"
                     }
                 }
 
-                // stage ("Deploy to Production"){
-                //     steps {
-                //         sh "scp -o StrictHostKeyChecking=no -i /Users/louis/Documents/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_prod}:/var/lib/tomcat7/webapps"
-                //     }
-                // }
+                stage ("Deploy to Production"){
+                    steps {
+                        sh "scp -o StrictHostKeyChecking=no -i /Users/louis/Documents/tomcat-demo.pem **/target/*.war ec2-user@${params.tomcat_prod}:/var/lib/tomcat7/webapps"
+                    }
+                }
             }
         }
     }
