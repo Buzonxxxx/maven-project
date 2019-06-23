@@ -35,21 +35,21 @@
 
   # kill process
   docker kill [container ID]
-
+  # kill all process
+  docker kill $(docker ps -q)
+  
   # stop process
   docker stop [container ID]
+  # stop all process
+  docker stop $(docker ps -q)
   
+  # list container
+  docker container ls
+  # remove all container
+  docker rm $(docker container ls -aq)
+
   # remove img
   docker rmi -f tomcat
   # remove all image
   docker rmi $(docker images -a -q)
-
-  # 列出container清單
-  docker container ls
-
-  # 關閉所有container
-  docker kill $(docker ps -q)
-  # 刪除所有container
-  docker rm $(docker container ls -aq)
-  
   ```
